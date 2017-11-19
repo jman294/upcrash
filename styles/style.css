@@ -1,0 +1,138 @@
+html, body {
+  padding: 0;
+  margin: 0;
+
+  overflow: hidden;
+}
+
+#header {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 95%;
+  left: 0;
+
+  padding: 4px;
+  padding-top: 6px;
+  padding-left: 6px;
+
+  font-family: 'Share Tech Mono', monospace;
+
+  background-color: #272822;
+}
+
+#header a {
+  color: #9e9e9e;
+  text-decoration: none;
+}
+
+#header a:hover {
+  color: #9e9e9e;
+  text-decoration: underline;
+}
+
+#body {
+  position: absolute;
+  top: 5%;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.con {
+  position: absolute;
+}
+
+#jscon {
+  top: 0;
+  right: 50%;
+  bottom: 40%;
+  left: 0;
+}
+
+#htmlcon {
+  top: 60%;
+  right: 50%;
+  bottom: 0;
+  left: 0;
+}
+
+#jsedit {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  /*border-top: 1px solid grey;*/
+
+  font-size: 16px;
+  font-family: 'Fira Mono', monospace;
+}
+
+#htmledit {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  border-top: 1px solid grey;
+
+  font-size: 16px;
+  font-family: 'Fira Mono', monospace;
+}
+
+.pop {
+  display: none;
+
+  height: 25px;
+
+  position: absolute;
+  top: 3px;
+  right: 6px;
+
+  cursor: pointer;
+
+  z-index: 1;
+
+  text-align: center;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  font-weight: bold;
+  color: #9e769e;
+}
+
+#resultpop:hover {
+  opacity: .6;
+  cursor: pointer;
+}
+
+#jsmenu {
+  display: none;
+
+  position: absolute;
+  bottom: 30px;
+  right: 0px;
+
+  width: 60px;
+  height: 100px;
+
+  background-color: yellow;
+}
+
+#result {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 50%;
+
+  border-top: 1px solid grey;
+}
+
+iframe {
+  border: none;
+  width: 100%;
+  height: 100%;
+}
