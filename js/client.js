@@ -5,6 +5,7 @@ let iframeWindow = iframe.contentWindow
 let resultPop = document.querySelector('#resultpop')
 let result = document.querySelector('#result')
 
+
 let es = [
   {
     ace: ace.edit('jsedit'),
@@ -45,13 +46,11 @@ for (let e in es) {
 }
 
 const runJs = () => {
-  console.log('js ran')
   let userProg = es[0].ace.env.document.getValue()
   iframeWindow.eval(userProg)
 }
 const setHtml = () => {
-  console.log('html set')
-  iframe.innerHTML = ''
+  //iframe.innerHTML = ''
   let body = iframeDocument.querySelector('body')
   while (body.lastChild) {
     body.removeChild(body.lastChild)
@@ -83,4 +82,23 @@ resultPop.addEventListener('click', () => {
   resetIframe()
   setHtml()
   runJs()
+})
+
+let jsMenu = document.querySelector('#jsmenu')
+jsMenu.style.display = 'none'
+es[0].pop.addEventListener('click', () => {
+  switch (jsMenu.style.display) {
+    case 'block':
+      jsMenu.style.display = 'none'
+      break
+    case 'none':
+      jsMenu.style.display = 'block'
+      break
+  }
+})
+
+let button = document.querySelector('#menubutton')
+button.addEventListener('click', () => {
+  console.log('aasdf')
+  
 })
