@@ -46,12 +46,19 @@ html, body {
 #jscon {
   top: 0;
   right: 50%;
-  bottom: 40%;
+  bottom: 66.66%;
+  left: 0;
+}
+
+#csscon {
+  top: 33.33%;
+  right: 50%;
+  bottom: 33.33%;
   left: 0;
 }
 
 #htmlcon {
-  top: 60%;
+  top: 66.66%;
   right: 50%;
   bottom: 0;
   left: 0;
@@ -64,9 +71,20 @@ html, body {
   bottom: 0;
   left: 0;
 
-  /*border-top: 1px solid grey;*/
+  font-size: 12px;
+  font-family: 'Fira Mono', monospace;
+}
 
-  font-size: 16px;
+#cssedit {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  border-top: 1px solid grey;
+
+  font-size: 12px;
   font-family: 'Fira Mono', monospace;
 }
 
@@ -79,8 +97,18 @@ html, body {
 
   border-top: 1px solid grey;
 
-  font-size: 16px;
+  font-size: 12px;
   font-family: 'Fira Mono', monospace;
+}
+
+.dropzone {
+  display: block;
+  margin: 0 auto;
+  width: 75%;
+  height: 75%;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .pop {
@@ -89,7 +117,7 @@ html, body {
   height: 25px;
 
   position: absolute;
-  top: 3px;
+  top: 1px;
   right: 6px;
 
   cursor: pointer;
@@ -137,4 +165,25 @@ iframe {
   border: none;
   width: 100%;
   height: 100%;
+}
+
+.ace_scrollbar-h {
+  height: 6px !important;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 100, 100, 0.8);
+}
+
+::-webkit-scrollbar-corner,
+::-webkit-scrollbar-thumb:window-inactive {
+  background: rgba(100, 100, 100, 0.4);
 }
