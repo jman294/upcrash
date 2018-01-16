@@ -1,11 +1,11 @@
-let iframe = document.querySelector('iframe')
+let iframe = document.querySelector('iframe') || frames[0]
 let iframeDocument = iframe.contentDocument || iframe.contentWindow.document
 let iframeWindow = iframe.contentWindow
 
 let resultPop = document.querySelector('#resultpop')
 let result = document.querySelector('#result')
 
-let es = {
+var es = {
   js: {
     ace: ace.edit('jsedit'),
     typeTimer: -1,
@@ -119,5 +119,4 @@ es.js.pop.addEventListener('click', () => {
 let button = document.querySelector('#menubutton')
 button.addEventListener('click', () => {
   console.log('aasdf')
-  
 })
