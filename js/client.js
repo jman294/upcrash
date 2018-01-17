@@ -1,9 +1,6 @@
-let iframe = document.querySelector('iframe') || frames[0]
-let iframeDocument = iframe.contentDocument || iframe.contentWindow.document
-let iframeWindow = iframe.contentWindow
-
-let resultPop = document.querySelector('#resultpop')
-let result = document.querySelector('#result')
+var iframe = document.querySelector('iframe') || frames[0]
+var iframeDocument = iframe.contentDocument || iframe.contentWindow.document
+var iframeWindow = iframe.contentWindow
 
 var es = {
   js: {
@@ -41,6 +38,7 @@ for (let e in es) {
   es[e].ace.on('change', () => {
     clearTimeout(es[e].typeTimer)
     es[e].typeTimer = setTimeout(() => {
+      resetIframe();
       setHtml()
       addCss()
       runJs()
@@ -58,30 +56,32 @@ for (let e in es) {
 }
 
 const runJs = () => {
-  let userProg = es.js.ace.env.document.getValue()
+  var userProg = es.js.ace.env.document.getValue()
+  iframeWindow.parent = null
+  iframeWindow.document.write = null
   iframeWindow.eval(userProg)
 }
 const setHtml = () => {
-  //iframe.innerHTML = ''
-  let body = iframeDocument.querySelector('body')
+  var body = iframeDocument.querySelector('body')
   while (body.lastChild) {
     body.removeChild(body.lastChild)
   }
-  let userMarkup = es.html.ace.env.document.getValue()
-  let wrapper = document.createElement('div')
+  var userMarkup = es.html.ace.env.document.getValue()
+  var wrapper = document.createElement('div')
   wrapper.innerHTML = userMarkup
   while (wrapper.firstChild) {
     iframeDocument.body.appendChild(wrapper.firstChild)
   }
 }
 const addCss = () => {
-  let userCss = es.css.ace.session.getValue()
-  let style = iframeDocument.createElement('style')
+  var userCss = es.css.ace.session.getValue()
+  var style = iframeDocument.createElement('style')
   style.innerHTML = userCss
   iframeDocument.body.appendChild(style)
 }
+
 const resetIframe = () => {
-  let iframeParent = iframe.parentNode
+  var iframeParent = iframe.parentNode
   iframe.parentNode.removeChild(iframe)
   iframe = document.createElement('iframe')
   result.appendChild(iframe)
@@ -89,6 +89,9 @@ const resetIframe = () => {
   iframeDocument = iframe.contentDocument || iframe.contentWindow.document
   iframeWindow = iframe.contentWindow
 }
+
+var resultPop = document.querySelector('#resultpop')
+var result = document.querySelector('#result')
 
 result.addEventListener('mouseenter', () => {
   resultPop.style.display = 'block'
@@ -103,20 +106,117 @@ resultPop.addEventListener('click', () => {
   runJs()
 })
 
-let jsMenu = document.querySelector('#jsmenu')
-jsMenu.style.display = 'none'
-es.js.pop.addEventListener('click', () => {
-  switch (jsMenu.style.display) {
-    case 'block':
-      jsMenu.style.display = 'none'
-      break
-    case 'none':
-      jsMenu.style.display = 'block'
-      break
-  }
+var button = document.querySelector('#menubutton')
+button.addEventListener('click', () => {
 })
 
-let button = document.querySelector('#menubutton')
-button.addEventListener('click', () => {
-  console.log('aasdf')
-})
+// LAYOUT
+var contentBody = document.getElementById('body')
+var checkBoxes = document.getElementsByClassName('check')
+for (var i=0; i<checkBoxes.length; i++) {
+  var el = checkBoxes[i]
+  el.addEventListener('change', (e) => {
+    var numEditors = contentBody.children.length-1
+    if (e.srcElement.checked) {
+      switch (e.srcElement.id) {
+        case 'jscheck':
+          if (numEditors === 2) {
+            es.js.container.style.top = '0%'
+            es.js.container.style.bottom = '66.66%'
+            es.css.container.style.top = '33.33%';
+            es.css.container.style.bottom = '33.33%';
+            es.html.container.style.top = '66.66%';
+            es.html.container.style.bottom = '0%';
+          } else {
+            es.js.container.style.top = '0%'
+            es.js.container.style.bottom = '50%'
+            contentBody.firstElementChild.style.top = '50%'
+            contentBody.firstElementChild.style.bottom = '0%'
+          }
+          contentBody.insertBefore(es.js.container, contentBody.firstChild)
+          break
+        case 'csscheck':
+          if (numEditors === 2) {
+            es.js.container.style.top = '0%';
+            es.js.container.style.bottom = '66.66%';
+            es.css.container.style.top = '33.33%';
+            es.css.container.style.bottom = '33.33%';
+            es.html.container.style.top = '66.66%';
+            es.html.container.style.bottom = '0%';
+          } else {
+            if (contentBody.firstElementChild.id.includes('html')) {
+              es.css.container.style.top = '0%'
+              es.css.container.style.bottom = '50%'
+              contentBody.firstElementChild.style.top = '50%'
+              contentBody.firstElementChild.style.bottom = '0%'
+            } else {
+              es.css.container.style.top = '50%'
+              es.css.container.style.bottom = '0%'
+              contentBody.firstElementChild.style.top = '0%'
+              contentBody.firstElementChild.style.bottom = '50%'
+            }
+          }
+          contentBody.insertBefore(es.css.container, contentBody.firstChild)
+          break
+        case 'htmlcheck':
+          if (numEditors === 2) {
+            es.js.container.style.top = '0%';
+            es.js.container.style.bottom = '66.66%';
+            es.css.container.style.top = '33.33%';
+            es.css.container.style.bottom = '33.33%';
+            es.html.container.style.top = '66.66%'
+            es.html.container.style.bottom = '0%'
+          } else {
+            es.html.container.style.top = '50%'
+            es.html.container.style.bottom = '0%'
+            contentBody.firstElementChild.style.top = '0%'
+            contentBody.firstElementChild.style.bottom = '50%'
+          }
+          contentBody.insertBefore(es.html.container, contentBody.firstChild)
+          break
+      }
+    } else {
+      switch (e.srcElement.id) {
+        case 'jscheck':
+          contentBody.removeChild(es.js.container)
+          if (numEditors === 3) {
+            es.css.container.style.top = '0%';
+            es.css.container.style.bottom = '50%';
+            es.html.container.style.top = '50%';
+            es.html.container.style.bottom = '0%';
+          } else if (numEditors === 2) {
+            contentBody.firstElementChild.style.top = '0%'
+            contentBody.firstElementChild.style.bottom = '0%'
+          } else {
+          }
+          break
+        case 'csscheck':
+          contentBody.removeChild(es.css.container)
+          if (numEditors === 3) {
+            es.js.container.style.top = '0%';
+            es.js.container.style.bottom = '50%';
+            es.html.container.style.top = '50%';
+            es.html.container.style.bottom = '0%';
+          } else if (numEditors === 2) {
+            contentBody.firstElementChild.style.top = '0%'
+            contentBody.firstElementChild.style.bottom = '0%'
+          } else {
+          }
+          break
+        case 'htmlcheck':
+          contentBody.removeChild(es.html.container)
+          if (numEditors === 3) {
+            es.js.container.style.top = '0%';
+            es.js.container.style.bottom = '50%';
+            es.css.container.style.top = '50%';
+            es.css.container.style.bottom = '0%';
+          } else if (numEditors === 2) {
+            contentBody.firstElementChild.style.top = '0%'
+            contentBody.firstElementChild.style.bottom = '0%'
+          } else {
+          }
+          break
+      }
+    }
+  })
+}
