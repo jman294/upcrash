@@ -8,21 +8,24 @@ var es = {
     typeTimer: -1,
     container: document.querySelector('#jscon'),
     dropzone: document.querySelector('#jscon .dropzone'),
-    pop: document.querySelector('#jspop')
+    pop: document.querySelector('#jspop'),
+    check: document.querySelector('#jscheck')
   },
   css: {
     ace: ace.edit('cssedit'),
     typeTimer: -1,
     container: document.querySelector('#csscon'),
     dropzone: document.querySelector('#csscon .dropzone'),
-    pop: document.querySelector('#csspop')
+    pop: document.querySelector('#csspop'),
+    check: document.querySelector('#csscheck')
   },
   html: {
     ace: ace.edit('htmledit'),
     typeTimer: -1,
     container: document.querySelector('#htmlcon'),
     dropzone: document.querySelector('#htmlcon .dropzone'),
-    pop: document.querySelector('#htmlpop')
+    pop: document.querySelector('#htmlpop'),
+    check: document.querySelector('#htmlcheck')
   }
 }
 
@@ -118,6 +121,9 @@ for (var i=0; i<checkBoxes.length; i++) {
   el.addEventListener('change', (e) => {
     var numEditors = contentBody.children.length-1
     if (e.srcElement.checked) {
+      es.js.check.disabled = false
+      es.css.check.disabled = false
+      es.html.check.disabled = false
       switch (e.srcElement.id) {
         case 'jscheck':
           if (numEditors === 2) {
@@ -187,6 +193,11 @@ for (var i=0; i<checkBoxes.length; i++) {
           } else if (numEditors === 2) {
             contentBody.firstElementChild.style.top = '0%'
             contentBody.firstElementChild.style.bottom = '0%'
+            if (contentBody.firstElementChild.id.includes('css')) {
+              es.css.check.disabled = true
+            } else {
+              es.html.check.disabled = true
+            }
           } else {
           }
           break
@@ -200,6 +211,11 @@ for (var i=0; i<checkBoxes.length; i++) {
           } else if (numEditors === 2) {
             contentBody.firstElementChild.style.top = '0%'
             contentBody.firstElementChild.style.bottom = '0%'
+            if (contentBody.firstElementChild.id.includes('html')) {
+              es.html.check.disabled = true
+            } else {
+              es.js.check.disabled = true
+            }
           } else {
           }
           break
@@ -213,6 +229,11 @@ for (var i=0; i<checkBoxes.length; i++) {
           } else if (numEditors === 2) {
             contentBody.firstElementChild.style.top = '0%'
             contentBody.firstElementChild.style.bottom = '0%'
+            if (contentBody.firstElementChild.id.includes('js')) {
+              es.js.check.disabled = true
+            } else {
+              es.css.check.disabled = true
+            }
           } else {
           }
           break
