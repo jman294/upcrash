@@ -36,12 +36,12 @@ es.css.ace.getSession().setMode('ace/mode/css')
 es.html.ace.getSession().setMode('ace/mode/html')
 
 for (let e in es) {
+  es[e].ace.setShowPrintMargin(false)
   es[e].ace.setTheme('ace/theme/monokai')
 
   es[e].ace.on('change', function () {
     clearTimeout(es[e].typeTimer)
     es[e].typeTimer = setTimeout(function () {
-      resetIframe();
       setHtml()
       addCss()
       runJs()
@@ -53,9 +53,9 @@ for (let e in es) {
   es[e].container.addEventListener('mouseleave', function () {
     es[e].pop.style.display = 'none'
   })
-  es[e].dropzone.addEventListener('mouseenter', function () {
-    es[e].ace.focus()
-  })
+  //es[e].dropzone.addEventListener('mouseenter', function () {
+    //es[e].ace.focus()
+  //})
 }
 
 const runJs = function () {
@@ -103,7 +103,6 @@ result.addEventListener('mouseleave', function () {
   resultPop.style.display = 'none'
 })
 resultPop.addEventListener('click', function () {
-  resetIframe()
   setHtml()
   addCss()
   runJs()
@@ -120,11 +119,11 @@ for (var i=0; i<checkBoxes.length; i++) {
   var el = checkBoxes[i]
   el.addEventListener('change', (e) => {
     var numEditors = contentBody.children.length-1
-    if (e.srcElement.checked) {
+    if (e.target.checked) {
       es.js.check.disabled = false
       es.css.check.disabled = false
       es.html.check.disabled = false
-      switch (e.srcElement.id) {
+      switch (e.target.id) {
         case 'jscheck':
           if (numEditors === 2) {
             es.js.container.style.top = '0%'
@@ -182,7 +181,7 @@ for (var i=0; i<checkBoxes.length; i++) {
           break
       }
     } else {
-      switch (e.srcElement.id) {
+      switch (e.target.id) {
         case 'jscheck':
           contentBody.removeChild(es.js.container)
           if (numEditors === 3) {
@@ -240,4 +239,7 @@ for (var i=0; i<checkBoxes.length; i++) {
       }
     }
   })
+  es.js.ace.resize()
+  es.css.ace.resize()
+  es.html.ace.resize()
 }
