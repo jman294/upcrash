@@ -43,9 +43,7 @@ for (let e in es) {
   es[e].ace.on('change', () => {
     clearTimeout(es[e].typeTimer)
     es[e].typeTimer = setTimeout(() => {
-      setHtml()
-      addCss()
-      runJs()
+      resetIframe()
     }, 500)
   })
   es[e].container.addEventListener('mouseenter', () => {
@@ -54,48 +52,33 @@ for (let e in es) {
   es[e].container.addEventListener('mouseleave', () => {
     es[e].pop.style.display = 'none'
   })
-  //es[e].dropzone.addEventListener('mouseenter', () => {
-    //es[e].ace.focus()
-  //})
 }
 
-const runJs = () => {
-  var userProg = es.js.ace.env.document.getValue()
-  iframeWindow.parent = null
-  iframeWindow.document.write = null
-  iframeWindow.eval(userProg)
-}
-const setHtml = () => {
-  var body = iframeDocument.querySelector('body')
-  while (body.lastChild) {
-    body.removeChild(body.lastChild)
-  }
-  var userMarkup = es.html.ace.env.document.getValue()
-  var wrapper = document.createElement('div')
-  wrapper.innerHTML = userMarkup
-  while (wrapper.firstChild) {
-    iframeDocument.body.appendChild(wrapper.firstChild)
-  }
-}
-const addCss = () => {
-  var userCss = es.css.ace.session.getValue()
-  var style = iframeDocument.createElement('style')
-  style.innerHTML = userCss
-  iframeDocument.body.appendChild(style)
-}
-
+var result = document.querySelector('#result')
 const resetIframe = () => {
-  var iframeParent = iframe.parentNode
-  iframe.parentNode.removeChild(iframe)
-  iframe = document.createElement('iframe')
-  result.appendChild(iframe)
-  iframe = document.querySelector('iframe')
-  iframeDocument = iframe.contentDocument || iframe.contentWindow.document
-  iframeWindow = iframe.contentWindow
+  result.removeChild(result.firstElementChild)
+  var newIframe = document.createElement('iframe');
+
+  var html = es.html.ace.session.getValue()
+  var css = es.css.ace.session.getValue()
+  var js = es.js.ace.session.getValue()
+
+  result.insertBefore(newIframe, result.firstChild);
+
+  newIframe.contentDocument.open();
+
+  newIframe.contentDocument.write(html);
+  var cssEl = newIframe.contentDocument.createElement('style')
+  cssEl.innerHTML = css
+
+  newIframe.contentDocument.close();
+  newIframe.contentDocument.body.appendChild(cssEl)
+  var jsEl = newIframe.contentDocument.createElement('script')
+  jsEl.innerHTML = js
+  newIframe.contentDocument.body.appendChild(jsEl)
 }
 
 var resultPop = document.querySelector('#resultpop')
-var result = document.querySelector('#result')
 
 result.addEventListener('mouseenter', () => {
   resultPop.style.display = 'block'
@@ -104,9 +87,7 @@ result.addEventListener('mouseleave', () => {
   resultPop.style.display = 'none'
 })
 resultPop.addEventListener('click', () => {
-  setHtml()
-  addCss()
-  runJs()
+  resetIframe()
 })
 
 var button = document.querySelector('#menubutton')
