@@ -37,6 +37,7 @@ es.html.ace.getSession().setMode('ace/mode/html')
 
 for (let e in es) {
   es[e].ace.setShowPrintMargin(false)
+  es[e].ace.getSession().setUseWrapMode(true)
   es[e].ace.setTheme('ace/theme/monokai')
 
   es[e].ace.on('change', () => {
@@ -117,6 +118,7 @@ var contentBody = document.getElementById('body')
 var checkBoxes = document.getElementsByClassName('check')
 for (var i=0; i<checkBoxes.length; i++) {
   var el = checkBoxes[i]
+  el.checked = 'true'
   el.addEventListener('change', (e) => {
     var numEditors = contentBody.children.length-1
     if (e.target.checked) {
@@ -238,8 +240,8 @@ for (var i=0; i<checkBoxes.length; i++) {
           break
       }
     }
+    es.js.ace.resize()
+    es.css.ace.resize()
+    es.html.ace.resize()
   })
-  es.js.ace.resize()
-  es.css.ace.resize()
-  es.html.ace.resize()
 }
