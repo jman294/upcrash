@@ -35,6 +35,31 @@ es.js.ace.getSession().setUseSoftTabs(true)
 es.css.ace.getSession().setMode('ace/mode/css')
 es.html.ace.getSession().setMode('ace/mode/html')
 
+es.html.ace.env.editor.on('focus', () => {
+  highlightSelection = true
+}
+
+function getSurroundingHtmlElement () {
+  var closeBracket = es.html.ace.env.editor.find('>',
+    {
+      preventScroll: true,
+      backwards: true
+    }
+  )
+
+  var str = es.html.ace.session.getValue()
+  var n = closeBracket.start.row
+  var L = str.length, i = -1
+  while (n-- && i++<L) {
+    i = str.indexOf('\n', i)
+    if (i < 0) {
+      break
+    }
+  }
+  i += closeBracket.start.column + 1
+  return str.slice(0, i) + ' data-upcrash' + str.slice(i)
+}
+
 for (let e in es) {
   es[e].ace.setShowPrintMargin(false)
   es[e].ace.getSession().setUseWrapMode(true)
@@ -45,6 +70,23 @@ for (let e in es) {
     es[e].typeTimer = setTimeout(() => {
       resetIframe()
     }, 500)
+    var range = es.html.ace.env.editor.find('<',
+      {
+        preventScroll: true,
+        backwards: false
+      }
+    )
+    //var cursor = es.html.ace.env.editor.selection.getCursor()
+    //if (range === null) {
+      //return
+    //}
+    //if (range.start.row > cursor.row) {
+      //getSurroundingHtmlElement()
+    //} else if (range.start.row === cursor.row) {
+      //if (range.start.column > cursor.column) {
+        //getSurroundingHtmlElement()
+      //}
+    //}
   })
   es[e].container.addEventListener('mouseenter', () => {
     es[e].pop.style.display = 'block'
@@ -59,8 +101,14 @@ const resetIframe = () => {
   result.removeChild(result.firstElementChild)
   var newIframe = document.createElement('iframe');
 
-  var html = es.html.ace.session.getValue()
-  var css = es.css.ace.session.getValue()
+  var html
+  if (highlightSelection) {
+    html = getSurroundingHtmlElement()
+  } else {
+    html = es.html.ace.session.getValue()
+  }
+
+  var css = '*[data-upcrash] { outline: 1px solid red; }\n' + es.css.ace.session.getValue()
   var js = es.js.ace.session.getValue()
 
   result.insertBefore(newIframe, result.firstChild);
