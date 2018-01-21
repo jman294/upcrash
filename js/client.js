@@ -42,28 +42,42 @@ es.html.ace.env.editor.on('blur', () => {
 })
 
 function getSurroundingHtmlElement (text) {
-  var closeBracket = es.html.ace.env.editor.find('>',
-    {
-      preventScroll: true,
-      backwards: true
-    }
-  )
-  if (closeBracket === null) {
-    return text;
-  }
-
+  var stack = []
   var str = text
-  var n = closeBracket.start.row
-  var L = str.length, i = -1
-  while (n-- && i++<L) {
-    i = str.indexOf('\n', i)
+  var cursor = es.html.ace.env.editor.getCursorPosition()
+  var n = cursor.row
+  var L = str.length, cursorPosition = -1
+  while (n-- && cursorPosition++<L) {
+    cursorPosition = str.indexOf('\n', cursorPosition)
     if (i < 0) {
       break
     }
   }
-  i += closeBracket.start.column + 1
-  return str.slice(0, i) + ' data-upcrash' + str.slice(i)
+  cursorPosition += cursor.column
+  for (var j=0; j<text.length-1; j++) {
+    if (j === cursorPosition) {
+      break
+    }
+    var c = text.charAt(j)
+    if (c === '<' && text.charAt(j+1) === '/') {
+      stack.pop()
+    } else if (c === '<') {
+      stack.push(j)
+    }
+  }
+  var t = 0;
+  for (t=stack.pop(); t<text.length; t++) {
+    if (text.charAt(t) === '>') {
+      break
+    }
+  }
+  var pos = t
+  return text.slice(0, pos) + ' data-upcrash' + text.slice(pos)
 }
+
+es.html.ace.env.editor.selection.on('changeCursor', () => {
+  resetIframe()
+})
 
 for (let e in es) {
   es[e].ace.setShowPrintMargin(false)
@@ -81,17 +95,6 @@ for (let e in es) {
         backwards: false
       }
     )
-    //var cursor = es.html.ace.env.editor.selection.getCursor()
-    //if (range === null) {
-      //return
-    //}
-    //if (range.start.row > cursor.row) {
-      //getSurroundingHtmlElement()
-    //} else if (range.start.row === cursor.row) {
-      //if (range.start.column > cursor.column) {
-        //getSurroundingHtmlElement()
-      //}
-    //}
   })
   es[e].container.addEventListener('mouseenter', () => {
     es[e].pop.style.display = 'block'
