@@ -1,6 +1,5 @@
 var iframe = document.querySelector('iframe') || frames[0]
-var iframeDocument = iframe.contentDocument || iframe.contentWindow.document
-var iframeWindow = iframe.contentWindow
+var highlightSelection = true;
 
 var es = {
   js: {
@@ -37,17 +36,23 @@ es.html.ace.getSession().setMode('ace/mode/html')
 
 es.html.ace.env.editor.on('focus', function () {
   highlightSelection = true
-}
+})
+es.html.ace.env.editor.on('blur', function () {
+  highlightSelection = false
+})
 
-function getSurroundingHtmlElement () {
+function getSurroundingHtmlElement (text) {
   var closeBracket = es.html.ace.env.editor.find('>',
     {
       preventScroll: true,
       backwards: true
     }
   )
+  if (closeBracket === null) {
+    return text;
+  }
 
-  var str = es.html.ace.session.getValue()
+  var str = text
   var n = closeBracket.start.row
   var L = str.length, i = -1
   while (n-- && i++<L) {
@@ -103,12 +108,12 @@ const resetIframe = function () {
 
   var html
   if (highlightSelection) {
-    html = getSurroundingHtmlElement()
+    html = getSurroundingHtmlElement(es.html.ace.session.getValue())
   } else {
     html = es.html.ace.session.getValue()
   }
 
-  var css = '*[data-upcrash] { outline: 1px solid red; }\n' + es.css.ace.session.getValue()
+  var css = '*[data-upcrash] { outline: 2px solid cornflowerblue; }\n' + es.css.ace.session.getValue()
   var js = es.js.ace.session.getValue()
 
   result.insertBefore(newIframe, result.firstChild);
