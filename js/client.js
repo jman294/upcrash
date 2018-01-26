@@ -1,4 +1,3 @@
-var iframe = document.querySelector('iframe') || frames[0]
 var highlightSelection = true;
 
 var es = {
@@ -34,13 +33,6 @@ es.js.ace.getSession().setUseSoftTabs(true)
 es.css.ace.getSession().setMode('ace/mode/css')
 es.html.ace.getSession().setMode('ace/mode/html')
 
-es.html.ace.env.editor.on('focus', () => {
-  highlightSelection = true
-})
-es.html.ace.env.editor.on('blur', () => {
-  highlightSelection = false
-})
-
 function getSurroundingHtmlElement (text) {
   var stack = []
   var str = text
@@ -65,19 +57,23 @@ function getSurroundingHtmlElement (text) {
       stack.push(j)
     }
   }
-  var t = 0;
-  for (t=stack.pop(); t<text.length; t++) {
-    if (text.charAt(t) === '>') {
-      break
+  if (stack.length === 0) {
+    return text
+  } else {
+    var t = 0;
+    for (t=stack.pop(); t<text.length; t++) {
+      if (text.charAt(t) === '>') {
+        break
+      }
     }
+    var pos = t
+    return text.slice(0, pos) + ' data-upcrash' + text.slice(pos)
   }
-  var pos = t
-  return text.slice(0, pos) + ' data-upcrash' + text.slice(pos)
 }
 
-es.html.ace.env.editor.selection.on('changeCursor', () => {
-  resetIframe()
-})
+//es.html.ace.env.editor.selection.on('changeCursor', () => {
+//resetIframe()
+//})
 
 for (let e in es) {
   es[e].ace.setShowPrintMargin(false)
@@ -104,7 +100,7 @@ for (let e in es) {
   })
 }
 
-var result = document.querySelector('#result')
+var result = document.getElementById('result')
 const resetIframe = () => {
   result.removeChild(result.firstElementChild)
   var newIframe = document.createElement('iframe');
@@ -142,6 +138,7 @@ result.addEventListener('mouseenter', () => {
 result.addEventListener('mouseleave', () => {
   resultPop.style.display = 'none'
 })
+
 resultPop.addEventListener('click', () => {
   resetIframe()
 })
@@ -282,3 +279,13 @@ for (var i=0; i<checkBoxes.length; i++) {
     es.html.ace.resize()
   })
 }
+
+var highlightCheck = document.getElementById('highlight')
+highlightCheck.addEventListener('change', (e) => {
+  if (e.target.checked) {
+    highlightSelection = true
+  } else {
+    highlightSelection = false
+  }
+  resetIframe()
+})
