@@ -135,6 +135,15 @@ html, body {
   cursor: pointer;
 }
 
+#resultpop span:hover {
+  opacity: 1;
+  cursor: pointer;
+}
+
+#resultpop div {
+  display: none;
+}
+
 #jsmenu {
   display: none;
 

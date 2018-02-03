@@ -71,9 +71,11 @@ function getSurroundingHtmlElement (text) {
   }
 }
 
-//es.html.ace.env.editor.selection.on('changeCursor', function () {
-//resetIframe()
-//})
+es.html.ace.env.editor.selection.on('changeCursor', function () {
+  if (highlightSelection) {
+    resetIframe()
+  }
+})
 
 for (let e in es) {
   es[e].ace.setShowPrintMargin(false)
@@ -102,6 +104,8 @@ for (let e in es) {
 
 var result = document.getElementById('result')
 const resetIframe = function () {
+  resultPop.style.display = 'block'
+  //setTimeout(function () {resultPop.style.display = 'none'}, 1000)
   result.removeChild(result.firstElementChild)
   var newIframe = document.createElement('iframe');
 
@@ -131,8 +135,11 @@ const resetIframe = function () {
 }
 
 var resultPop = document.querySelector('#resultpop')
+var resultSize = document.querySelector('#resultpop span')
+resultSize.textContent = result.offsetWidth + 'x' + result.offsetHeight
 
 result.addEventListener('mouseenter', function () {
+  resultSize.textContent = result.offsetWidth + 'x' + result.offsetHeight
   resultPop.style.display = 'block'
 })
 result.addEventListener('mouseleave', function () {
@@ -141,10 +148,6 @@ result.addEventListener('mouseleave', function () {
 
 resultPop.addEventListener('click', function () {
   resetIframe()
-})
-
-var button = document.querySelector('#menubutton')
-button.addEventListener('click', function () {
 })
 
 // LAYOUT
