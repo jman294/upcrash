@@ -147,13 +147,22 @@ function setResultSize () {
 for (var t = 0; t<dims.length; t++) {
   dims[t].addEventListener('keydown', (e) => {
     var parsed = parseInt(e.key)
-      if (e.key === 'Backspace') {
-      } else if (isNaN(parsed)) {
-        e.preventDefault()
-      }
+    console.log(e)
+    if (e.keyCode === 8 || e.keyCode === 39 || e.keyCode === 37 || (e.keyCode === 65 && e.ctrlKey) || e.keyCode === 9) {
+    } else if (isNaN(parsed)) {
+      e.preventDefault()
+    }
   })
   dims[t].addEventListener('input', (e) => {
+    var rwidth = result.offsetWidth
+    var rheight = result.offsetHeight
+    if (dims[0].value > rwidth) {
+      dims[0].value = rwidth
+    } else if (dims[1].value > rheight) {
+      dims[1].value = rheight
+    }
     resizeIframe(dims[0].value, dims[1].value)
+
   })
 }
 function resizeIframe (width, height) {
@@ -161,11 +170,9 @@ function resizeIframe (width, height) {
 
   var rwidth = result.offsetWidth
   iframe.style.width = width+'px'
-  //iframe.style.marginLeft = (rwidth-width)/(2*rwidth)*100+'%'
 
   var rheight = result.offsetHeight
   iframe.style.height = height+'px'
-  //iframe.style.marginTop = (rheight-height)/(2*rheight)*100+'%'
 }
 
 result.addEventListener('mouseenter', () => {

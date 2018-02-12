@@ -148,6 +148,8 @@ html, body {
   width: 30px;
   height: 10px;
 
+  background-color: rgba(0, 0, 0, 0);
+
   border: none;
   border-bottom: 1px solid #9e769e;
 }
