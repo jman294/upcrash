@@ -132,20 +132,49 @@ const resetIframe = function () {
   var jsEl = newIframe.contentDocument.createElement('script')
   jsEl.innerHTML = js
   newIframe.contentDocument.body.appendChild(jsEl)
+  resizeIframe(dims[0].value, dims[1].value)
 }
 
+// RESIZE IFRAME
+var fullSize = document.getElementById('fullsize')
 var resultPop = document.querySelector('#resultpop')
-var resultSize = document.querySelector('#resultpop span')
-resultSize.textContent = result.offsetWidth + 'x' + result.offsetHeight
+var dims = document.getElementsByClassName('iframedim')
+function setResultSize () {
+  var iframe = document.getElementsByTagName('iframe')[0]
+  dims[0].value = iframe.offsetWidth
+  dims[1].value = iframe.offsetHeight
+}
+for (var t = 0; t<dims.length; t++) {
+  dims[t].addEventListener('keydown', (e) => {
+    var parsed = parseInt(e.key)
+      if (e.key === 'Backspace') {
+      } else if (isNaN(parsed)) {
+        e.preventDefault()
+      }
+  })
+  dims[t].addEventListener('input', (e) => {
+    resizeIframe(dims[0].value, dims[1].value)
+  })
+}
+function resizeIframe (width, height) {
+  var iframe = document.getElementsByTagName('iframe')[0]
+
+  var rwidth = result.offsetWidth
+  iframe.style.width = width+'px'
+  //iframe.style.marginLeft = (rwidth-width)/(2*rwidth)*100+'%'
+
+  var rheight = result.offsetHeight
+  iframe.style.height = height+'px'
+  //iframe.style.marginTop = (rheight-height)/(2*rheight)*100+'%'
+}
 
 result.addEventListener('mouseenter', function () {
-  resultSize.textContent = result.offsetWidth + 'x' + result.offsetHeight
+  setResultSize()
   resultPop.style.display = 'block'
 })
 result.addEventListener('mouseleave', function () {
   resultPop.style.display = 'none'
 })
-
 resultPop.addEventListener('click', function () {
   resetIframe()
 })
