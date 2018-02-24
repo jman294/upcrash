@@ -71,9 +71,11 @@ function getSurroundingHtmlElement (text) {
   }
 }
 
-//es.html.ace.env.editor.selection.on('changeCursor', function () {
-//resetIframe()
-//})
+es.html.ace.env.editor.selection.on('changeCursor', function () {
+  if (highlightSelection) {
+    resetIframe()
+  }
+})
 
 for (let e in es) {
   es[e].ace.setShowPrintMargin(false)
@@ -102,6 +104,8 @@ for (let e in es) {
 
 var result = document.getElementById('result')
 const resetIframe = function () {
+  resultPop.style.display = 'block'
+  //setTimeout(function () {resultPop.style.display = 'none'}, 1000)
   result.removeChild(result.firstElementChild)
   var newIframe = document.createElement('iframe');
 
@@ -128,23 +132,58 @@ const resetIframe = function () {
   var jsEl = newIframe.contentDocument.createElement('script')
   jsEl.innerHTML = js
   newIframe.contentDocument.body.appendChild(jsEl)
+  resizeIframe(dims[0].value, dims[1].value)
 }
 
+// RESIZE IFRAME
+var fullSize = document.getElementById('fullsize')
 var resultPop = document.querySelector('#resultpop')
+var dims = document.getElementsByClassName('iframedim')
+function setResultSize () {
+  var iframe = document.getElementsByTagName('iframe')[0]
+  dims[0].value = iframe.offsetWidth
+  dims[1].value = iframe.offsetHeight
+}
+for (var t = 0; t<dims.length; t++) {
+  dims[t].addEventListener('keydown', (e) => {
+    var parsed = parseInt(e.key)
+    console.log(e)
+    if (e.keyCode === 8 || e.keyCode === 39 || e.keyCode === 37 || (e.keyCode === 65 && e.ctrlKey) || e.keyCode === 9) {
+    } else if (isNaN(parsed)) {
+      e.preventDefault()
+    }
+  })
+  dims[t].addEventListener('input', (e) => {
+    var rwidth = result.offsetWidth
+    var rheight = result.offsetHeight
+    if (dims[0].value > rwidth) {
+      dims[0].value = rwidth
+    } else if (dims[1].value > rheight) {
+      dims[1].value = rheight
+    }
+    resizeIframe(dims[0].value, dims[1].value)
+
+  })
+}
+function resizeIframe (width, height) {
+  var iframe = document.getElementsByTagName('iframe')[0]
+
+  var rwidth = result.offsetWidth
+  iframe.style.width = width+'px'
+
+  var rheight = result.offsetHeight
+  iframe.style.height = height+'px'
+}
 
 result.addEventListener('mouseenter', function () {
+  setResultSize()
   resultPop.style.display = 'block'
 })
 result.addEventListener('mouseleave', function () {
   resultPop.style.display = 'none'
 })
-
 resultPop.addEventListener('click', function () {
   resetIframe()
-})
-
-var button = document.querySelector('#menubutton')
-button.addEventListener('click', function () {
 })
 
 // LAYOUT
