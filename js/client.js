@@ -105,7 +105,6 @@ for (let e in es) {
 var result = document.getElementById('result')
 const resetIframe = () => {
   resultPop.style.display = 'block'
-  //setTimeout(() => {resultPop.style.display = 'none'}, 1000)
   result.removeChild(result.firstElementChild)
   var newIframe = document.createElement('iframe');
 
@@ -133,6 +132,9 @@ const resetIframe = () => {
   jsEl.innerHTML = js
   newIframe.contentDocument.body.appendChild(jsEl)
   resizeIframe(dims[0].value, dims[1].value)
+  setResultSize()
+
+  newIframe.contentDocument.body.addEventListener('mousemove', function (e) { onIframeMove(e, newIframe)})
 }
 
 // RESIZE IFRAME
@@ -147,7 +149,6 @@ function setResultSize () {
 for (var t = 0; t<dims.length; t++) {
   dims[t].addEventListener('keydown', (e) => {
     var parsed = parseInt(e.key)
-    console.log(e)
     if (e.keyCode === 8 || e.keyCode === 39 || e.keyCode === 37 || (e.keyCode === 65 && e.ctrlKey) || e.keyCode === 9) {
     } else if (isNaN(parsed)) {
       e.preventDefault()
@@ -185,6 +186,34 @@ result.addEventListener('mouseleave', () => {
 resultPop.addEventListener('click', () => {
   resetIframe()
 })
+
+// HOVER INSPECT
+var oldEl;
+function onIframeMove (e, iframe) {
+  let element = document.createElement('div')
+  element.style.position = 'absolute'
+  let hoverEl = iframe.contentDocument.elementFromPoint(e.clientX, e.clientY)
+  let oldHoverEl = document.querySelector('*[data-hover]')
+  oldHoverEl.style.backgroundColor = oldEl.style.backgroundColor;
+  if (oldHoverEl != hoverEl) {
+  }
+  let hoverElBox = hoverEl.getBoundingClientRect()
+
+  element.style.top = hoverElBox.y + 'px'
+  element.style.left = hoverElBox.x + 'px'
+  element.style.backgroundColor = '#000'
+  element.style.opacity = '0.3'
+  element.style.height = hoverEl.offsetHeight + 'px'
+  element.style.width = hoverEl.offsetWidth + 'px'
+  element.style.zIndex = '0'
+  element.addEventListener('mouseleave', () => {
+    result.removeChild(element)
+  })
+  console.log(element)
+  oldEl = hoverEl;
+  hoverEl.style.backgroundColor = 'red'
+  hoverEl.setAttribute('data-hover', 'true')
+}
 
 // LAYOUT
 var contentBody = document.getElementById('body')
@@ -328,3 +357,7 @@ highlightCheck.addEventListener('change', (e) => {
   }
   resetIframe()
 })
+
+
+// INITIAL
+resetIframe()
