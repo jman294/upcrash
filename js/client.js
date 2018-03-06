@@ -1,4 +1,5 @@
 var highlightSelection = true;
+var highlightHover = false;
 
 var es = {
   js: {
@@ -182,38 +183,41 @@ result.addEventListener('mouseenter', () => {
 })
 result.addEventListener('mouseleave', () => {
   resultPop.style.display = 'none'
+  hoverMask.style.display = 'none'
 })
 resultPop.addEventListener('click', () => {
   resetIframe()
 })
 
 // HOVER INSPECT
-var oldEl;
+var hoverMask = document.getElementById('hover')
 function onIframeMove (e, iframe) {
-  let element = document.createElement('div')
-  element.style.position = 'absolute'
-  let hoverEl = iframe.contentDocument.elementFromPoint(e.clientX, e.clientY)
-  let oldHoverEl = document.querySelector('*[data-hover]')
-  oldHoverEl.style.backgroundColor = oldEl.style.backgroundColor;
-  if (oldHoverEl != hoverEl) {
+  if (highlightHover) {
+    hoverMask.style.display = 'block'
   }
+  hoverMask.style.position = 'absolute'
+  let hoverEl = iframe.contentDocument.elementFromPoint(e.clientX, e.clientY)
   let hoverElBox = hoverEl.getBoundingClientRect()
 
-  element.style.top = hoverElBox.y + 'px'
-  element.style.left = hoverElBox.x + 'px'
-  element.style.backgroundColor = '#000'
-  element.style.opacity = '0.3'
-  element.style.height = hoverEl.offsetHeight + 'px'
-  element.style.width = hoverEl.offsetWidth + 'px'
-  element.style.zIndex = '0'
-  element.addEventListener('mouseleave', () => {
-    result.removeChild(element)
-  })
-  console.log(element)
+  hoverMask.style.top = hoverElBox.y + 'px'
+  hoverMask.style.left = hoverElBox.x + 'px'
+  hoverMask.style.backgroundColor = '#000'
+  hoverMask.style.opacity = '0.3'
+  hoverMask.style.height = hoverEl.offsetHeight + 'px'
+  hoverMask.style.width = hoverEl.offsetWidth + 'px'
+  hoverMask.style.zIndex = '0'
+  hoverMask.style.pointerEvents = 'none'
   oldEl = hoverEl;
-  hoverEl.style.backgroundColor = 'red'
-  hoverEl.setAttribute('data-hover', 'true')
 }
+
+var hoverCheck = document.getElementById('hovercheck')
+hoverCheck.addEventListener('change', (e) => {
+  if (e.target.checked) {
+    highlightHover = true;
+  } else {
+    highlightHover = false;
+  }
+})
 
 // LAYOUT
 var contentBody = document.getElementById('body')
