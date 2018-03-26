@@ -12,9 +12,20 @@
   <body>
     <div id="header">
       <img src="images/logo.png" alt="upcrash logo" title="Upcrash"></img>
-      <a href="">ABOUT</a>
-      <a href="">EMBED</a>
-      <a href="">NEW</a>
+      <a id="aboutbutton">ABOUT</a>
+      <!--<a class="popup">EMBED</a>-->
+      <a id="clone" class="popup">CLONE</a>
+      <a href="/">NEW</a>
+      <div id="modalover" class="modali"></div>
+      <div id="modal" class="modali">
+        <b>Hey there!</b> Thanks for checking out Upcrash. Prototype, create, and share web snippets! <a href="https://github.com/jman294/upcrash-server" target="_blank">Visit the Github here</a>
+        <br>
+        <br>
+        We welcome your feedback:
+        <textarea id="feedarea"></textarea>
+        <button id="feedbutton">SEND</button>
+        <div id="noti">Sent!</div>
+      </div>
       <input id="jscheck" class="check" type="checkbox" checked>JS</input>
       <input id="csscheck" class="check" type="checkbox" checked>CSS</input>
       <input id="htmlcheck" class="check" type="checkbox" checked>HTML</input>
@@ -64,6 +75,9 @@
       </div>
     </div>
 
+    <script>
+var template = {}
+    </script>
     <script src="js/ace/ace.js" type="text/javascript" charset="utf-8"></script>
     <script src="build/built.js" type="text/javascript" charset="utf-8"></script>
   </body>

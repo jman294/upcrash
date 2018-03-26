@@ -1,9 +1,12 @@
-var highlightSelection = true;
+var highlightSelection = true
+var saved = false
+var id
 
 var es = {
   js: {
     ace: ace.edit('jsedit'),
     typeTimer: -1,
+    saveTimer: -1,
     container: document.querySelector('#jscon'),
     dropzone: document.querySelector('#jscon .dropzone'),
     pop: document.querySelector('#jspop'),
@@ -12,6 +15,7 @@ var es = {
   css: {
     ace: ace.edit('cssedit'),
     typeTimer: -1,
+    saveTimer: -1,
     container: document.querySelector('#csscon'),
     dropzone: document.querySelector('#csscon .dropzone'),
     pop: document.querySelector('#csspop'),
@@ -20,11 +24,30 @@ var es = {
   html: {
     ace: ace.edit('htmledit'),
     typeTimer: -1,
+    saveTimer: -1,
     container: document.querySelector('#htmlcon'),
     dropzone: document.querySelector('#htmlcon .dropzone'),
     pop: document.querySelector('#htmlpop'),
     check: document.querySelector('#htmlcheck')
   }
+}
+if (template.html !== undefined) {
+  es.html.ace.setValue(template.html, -1)
+}
+if (template.js !== undefined) {
+  es.js.ace.setValue(template.js, -1)
+}
+if (template.css !== undefined) {
+  es.css.ace.setValue(template.css, -1)
+}
+if (template.htmlShow !== undefined) {
+}
+if (template.jsShow !== undefined) {
+}
+if (template.cssShow !== undefined) {
+}
+if (template.highlightElement !== undefined) {
+  highlightSelection = template.highlightElement;
 }
 
 es.js.ace.getSession().setMode('ace/mode/javascript')
@@ -71,7 +94,7 @@ function getSurroundingHtmlElement (text) {
   }
 }
 
-es.html.ace.env.editor.selection.on('changeCursor', () => {
+es.html.ace.env.editor.selection.on('changeCursor', function () {
   if (highlightSelection) {
     resetIframe()
   }
@@ -82,11 +105,19 @@ for (let e in es) {
   es[e].ace.getSession().setUseWrapMode(true)
   es[e].ace.setTheme('ace/theme/monokai')
 
-  es[e].ace.on('change', () => {
+  es[e].ace.on('change', function () {
+    if (!saved) {
+      saved = true
+      setNewId();
+    }
     clearTimeout(es[e].typeTimer)
-    es[e].typeTimer = setTimeout(() => {
+    clearTimeout(es[e].saveTimer)
+    es[e].typeTimer = setTimeout(function () {
       resetIframe()
     }, 500)
+    es[e].saveTimer = setTimeout(function () {
+      save()
+    }, 2000)
     var range = es.html.ace.env.editor.find('<',
       {
         preventScroll: true,
@@ -94,18 +125,16 @@ for (let e in es) {
       }
     )
   })
-  es[e].container.addEventListener('mouseenter', () => {
+  es[e].container.addEventListener('mouseenter', function () {
     es[e].pop.style.display = 'block'
   })
-  es[e].container.addEventListener('mouseleave', () => {
+  es[e].container.addEventListener('mouseleave', function () {
     es[e].pop.style.display = 'none'
   })
 }
 
 var result = document.getElementById('result')
-const resetIframe = () => {
-  resultPop.style.display = 'block'
-  //setTimeout(() => {resultPop.style.display = 'none'}, 1000)
+const resetIframe = function () {
   result.removeChild(result.firstElementChild)
   var newIframe = document.createElement('iframe');
 
@@ -147,7 +176,6 @@ function setResultSize () {
 for (var t = 0; t<dims.length; t++) {
   dims[t].addEventListener('keydown', (e) => {
     var parsed = parseInt(e.key)
-    console.log(e)
     if (e.keyCode === 8 || e.keyCode === 39 || e.keyCode === 37 || (e.keyCode === 65 && e.ctrlKey) || e.keyCode === 9) {
     } else if (isNaN(parsed)) {
       e.preventDefault()
@@ -175,16 +203,25 @@ function resizeIframe (width, height) {
   iframe.style.height = height+'px'
 }
 
-result.addEventListener('mouseenter', () => {
+result.addEventListener('mouseenter', function () {
   setResultSize()
   resultPop.style.display = 'block'
 })
-result.addEventListener('mouseleave', () => {
+result.addEventListener('mouseleave', function () {
   resultPop.style.display = 'none'
 })
-resultPop.addEventListener('click', () => {
+resultPop.addEventListener('click', function () {
   resetIframe()
 })
+
+window.addEventListener('resize', function () {
+  var iframe = document.getElementsByTagName('iframe')[0]
+  var resultSize = result.offsetHeight;
+  if (iframe.offsetHeight > resultSize) {
+    iframe.style.height = '100%'
+  }
+})
+
 
 // LAYOUT
 var contentBody = document.getElementById('body')
@@ -327,4 +364,81 @@ highlightCheck.addEventListener('change', (e) => {
     highlightSelection = false
   }
   resetIframe()
+})
+
+// SAVE
+function save () {
+  if (id !== null) {
+    sendSaveRequest()
+  } else {
+    console.log('%cCannot save!', 'color: red');
+  }
+}
+
+function sendSaveRequest () {
+  template.js = es.js.ace.session.getValue()
+  template.html = es.html.ace.session.getValue()
+  template.css = es.css.ace.session.getValue()
+  template.highlightElement = highlightSelection
+
+  var oReq = new XMLHttpRequest()
+  oReq.addEventListener('load', function () {
+    console.log('%csaved!', 'color: red')
+  })
+  oReq.open('POST', '/save/'+id)
+  oReq.send(JSON.stringify(template))
+}
+
+function setNewId () {
+  var nReq = new XMLHttpRequest()
+  nReq.onreadystatechange = function() {
+    if (this.readyState == 4) {
+      id = JSON.parse(this.responseText).newId
+      history.pushState(null, '', '/'+id);
+    }
+  }
+  nReq.open("GET", "/new")
+  nReq.send()
+}
+
+window.onload = function () {
+  setResultSize()
+  resetIframe()
+  highlightCheck.checked = template.highlightElement
+}
+
+// HEADER BUTTONS
+var aboutButton = document.getElementById('aboutbutton')
+var modalItems = document.getElementsByClassName('modali')
+var modalOver = modalItems[0]
+var sendFeedback = document.getElementById('feedbutton')
+var feedbackArea = document.getElementById('feedarea')
+var notification = document.getElementById('noti')
+var aboutModalState = false
+aboutButton.addEventListener('click', function () {
+  aboutModalState = !aboutModalState;
+  if (aboutModalState) {
+    for (var i=0; i<modalItems.length; i++) {
+      modalItems[i].style.display = 'block'
+    }
+  } else {
+    for (var i=0; i<modalItems.length; i++) {
+      modalItems[i].style.display = 'none'
+    }
+    noti.style.display = 'none'
+  }
+})
+modalOver.addEventListener('click', function () {
+  aboutModalState = false;
+  for (var i=0; i<modalItems.length; i++) {
+    modalItems[i].style.display = 'none'
+  }
+  noti.style.display = 'none'
+})
+sendFeedback.addEventListener('click', function () {
+  noti.style.display = 'block'
+  var fReq = new XMLHttpRequest()
+  fReq.open('POST', '/feedback')
+  fReq.send(feedbackArea.value)
+  feedbackArea.value = ''
 })
