@@ -1,0 +1,29 @@
+{
+  "name": "upcrash",
+  "version": "1.0.0",
+  "description": "DEPRECATED: The client code has been merged into the server [repository](https://github.com/jman294/upcrash-server)",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jman294/upcrash.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jman294/upcrash/issues"
+  },
+  "homepage": "https://github.com/jman294/upcrash#readme",
+  "devDependencies": {
+    "css-loader": "^2.1.1",
+    "style-loader": "^0.23.1",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0"
+  },
+  "dependencies": {
+    "lodash": "^4.17.11"
+  }
+}
