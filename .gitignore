@@ -1,4 +1,6 @@
 # Vim
 *.sw*
 
+node_modules/
+
 build/*
