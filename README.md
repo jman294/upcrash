@@ -1,2 +1,4 @@
-# A simple web js/html/css editor
-DEPRECATED: The client code has been merged into the server [repository](https://github.com/jman294/upcrash-server)
+An absolute bare-bones web app.
+
+Created from templates made available by Stagehand under a BSD-style
+[license](https://github.com/dart-lang/stagehand/blob/master/LICENSE).

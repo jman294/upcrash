@@ -1,0 +1,13 @@
+targets:
+  $default:
+    builders:
+      less_dart:
+        options:
+          entry_points: ['*.less']
+          include_path: 'path/to/directory/for/less/includes'
+          cleancss: true
+          compress: true
+          #other_flags: ['to include in the lessc command line', ...]
+      less_dart|less_source_cleanup:
+        options:
+          enabled: true
